@@ -124,11 +124,13 @@ namespace suivi_colis.Commands
                     return;
                 }
                 
+                string msgParcelState = $"Etat de la commande '{parcelCode}' : \n\n({mostRecentUpdate.code}) {mostRecentUpdate.label}";
+                
                 // Untrack when parcel update hits specific code
                 if (_codesStopTracking.Contains(mostRecentUpdate.code))
                 {
                     _parcelsToTrack.RemoveAll(ppt => ppt.ParcelCode == parcelCode);
-                    await channel.SendMessageAsync($"Le bot ne suis plus le colis car l'état du colis a le code '{mostRecentUpdate.code}'.");
+                    await channel.SendMessageAsync($"{msgParcelState}\n\nLe bot ne suis plus le colis car l'état du colis a le code '{mostRecentUpdate.code}'.");
                 }
                 // Tracks if parcelCode isn't already track and last update doesn't hit specific code
                 else if (!_parcelsToTrack.Any(ppt => ppt.ParcelCode == parcelCode))
@@ -139,7 +141,7 @@ namespace suivi_colis.Commands
                 // Updates parcel code
                 UpdateNextDateTimeToTrack(parcelCode, mostRecentUpdate);
 
-                await channel.SendMessageAsync($"Etat de la commande '{parcelCode}' : \n\n({mostRecentUpdate.code}) {mostRecentUpdate.label}");
+                await channel.SendMessageAsync(msgParcelState);
             }
             else
             {
